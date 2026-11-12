@@ -7,6 +7,13 @@
 #define true 1
 #define false 0
 
+typedef enum e_scheduler
+{
+    FIFO,
+    EDF,
+    CUSTOM
+}   t_scheduler_type;
+
 typedef struct s_config
 {
     int number_of_coders;
@@ -16,7 +23,7 @@ typedef struct s_config
     int time_to_refactor;
     int number_of_compiles_required;
     int dongle_cooldown;
-    int scheduler;
+    t_scheduler_type scheduler;
 } t_config;
 
 typedef struct s_dongle

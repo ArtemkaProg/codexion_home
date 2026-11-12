@@ -17,8 +17,7 @@ static bool parse(int argc, char **argv)
             {
                 printf("Error: Invalid argument - %s\n", argv[i]);
                 valid = false;
-                i++;
-                continue;
+                break;
             }
             j++;
         }
@@ -48,6 +47,7 @@ bool parse_config(int argc, char **args, t_config *config)
     config->time_to_refactor = ft_atoi(args[5]);
     config->number_of_compiles_required = ft_atoi(args[6]);
     config->dongle_cooldown = ft_atoi(args[7]);
+    config->scheduler = (ft_strcmp(args[8], "fifo") == 0) ? FIFO : EDF;
     return (true);
 }
 
@@ -83,6 +83,20 @@ bool    init_sim(t_sim *sim)
 }
 
 // void run_sim(t_sim *sim)
+
+void clean_sim(t_sim *sim)
+{
+    int i;
+
+    i = 0;
+    while (i < sim->config.number_of_coders)
+    {
+        pthread_mutex_destroy(&sim->dongles[i].mutex);
+        i++;
+    }
+    free(sim->coders);
+    free(sim->dongles);
+}
 
 int main(int argc, char **args)
 {

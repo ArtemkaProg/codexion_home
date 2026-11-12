@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stddef.h>
+#include <time.h>
 
 long get_time_ms(void)
 {
