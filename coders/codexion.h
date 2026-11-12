@@ -38,6 +38,14 @@ typedef struct s_coder
     struct s_sim    *sim;
 }   t_coder;
 
+typedef struct s_request
+{
+    int     coder_id;
+    long    arrival_time;
+    long    deadline;
+    long    sequence;
+}   t_request;
+
 typedef struct s_scheduler
 {
     t_request       *heap;

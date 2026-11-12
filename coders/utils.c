@@ -1,6 +1,13 @@
 #include <stdlib.h>
 #include <stddef.h>
 
+long get_time_ms(void)
+{
+    struct timespec ts;
+
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    return (ts.tv_sec * 1000L) + (ts.tv_nsec / 1000000L);
+}
 
 int ft_strlen(const char *s)
 {

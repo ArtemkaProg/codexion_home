@@ -2,8 +2,8 @@ NAME = program.exe
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
 
-SRCS = main.c \
-		utils.c
+SRCS = coders/main.c \
+		coders/utils.c
 
 OBJS = $(SRCS:.c=.o)
 
@@ -16,7 +16,7 @@ $(NAME): $(OBJS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS) *.swp *.gch
+	rm -f $(OBJS) *.swp *.gch *.exe
 
 fclean: clean
 	rm -f $(NAME)
