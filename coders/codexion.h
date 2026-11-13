@@ -31,7 +31,7 @@ typedef struct s_dongle
     pthread_mutex_t mutex;
     int     owner_id;
     long    available_at;
-    bool    is_available;
+    // bool    is_available;
 } t_dongle;
 
 typedef struct s_coder
@@ -79,3 +79,5 @@ int ft_strlen(const char *s);
 char *ft_strdup(char *src);
 bool ft_strcmp(const char *s1, const char *s2);
 int ft_atoi(const char *str);
+bool parse_config(int argc, char **args, t_config *config);
+bool    init_sim(t_sim *sim);

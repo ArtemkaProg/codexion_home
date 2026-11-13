@@ -1,9 +1,12 @@
-NAME = program.exe
+NAME = codexion
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
 
 SRCS = coders/main.c \
-		coders/utils.c
+		coders/utils.c \
+		coders/parse.c \
+		coders/init.c \
+		coders/clean.c
 
 OBJS = $(SRCS:.c=.o)
 
@@ -16,7 +19,7 @@ $(NAME): $(OBJS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS) *.swp *.gch *.exe
+	rm -f $(OBJS) *.swp *.gch a.out
 
 fclean: clean
 	rm -f $(NAME)
