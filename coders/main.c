@@ -14,5 +14,6 @@ int main(int argc, char **args)
         return (1);
     }
     printf("Number of coders: %d\n", sim.config.number_of_coders);
+    clean_sim(&sim);
     return (0);
 }

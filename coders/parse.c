@@ -1,52 +1,40 @@
 #include "codexion.h"
 
-static bool parse(int argc, char **argv)
+static bool    parse_numbers(char **args, t_config *cfg)
 {
+    int *fields[7];
     int i;
-    int j;
-    bool valid;
 
-    valid = true;
-    i = 1;
-    while (i < argc - 1)
+    fields[0] = &cfg->number_of_coders;
+    fields[1] = &cfg->time_to_burnout;
+    fields[2] = &cfg->time_to_compile;
+    fields[3] = &cfg->time_to_debug;
+    fields[4] = &cfg->time_to_refactor;
+    fields[5] = &cfg->number_of_compiles_required;
+    fields[6] = &cfg->dongle_cooldown;
+    i = 0;
+    while (i < 7)
     {
-        j = 0;
-        while (argv[i][j])
-        {
-            if (!isdigit((unsigned char)argv[i][j]))
-            {
-                printf("Error: Invalid argument - %s\n", argv[i]);
-                valid = false;
-                break;
-            }
-            j++;
-        }
+        if (!ft_atoi_safe(args[i + 1], fields[i]))
+            return (false);
+        if (*fields[i] <= 0 && i != 6)
+            return (false);
         i++;
     }
-    if (ft_strcmp(argv[8], "fifo") != 0 && ft_strcmp(argv[8], "edf") != 0)
-    {
-        printf("Error: Invalid scheduler - %s\n", argv[8]);
-        valid = false;
-    }
-    return valid;
+    return (true);
 }
 
-bool parse_config(int argc, char **args, t_config *config)
+bool    parse_config(int argc, char **args, t_config *config)
 {
     if (argc != 9)
-    {
-        printf("Usage: <number_of_coders> <time_to_burnout> <time_to_compile> <time_to_debug> <time_to_refactor> <number_of_compiles_required> <dongle_cooldown> <scheduler>\n");
-        return (false);
-    }
-    if (!parse(argc, args))
-        return (false);
-    config->number_of_coders = ft_atoi(args[1]);
-    config->time_to_burnout = ft_atoi(args[2]);
-    config->time_to_compile = ft_atoi(args[3]);
-    config->time_to_debug = ft_atoi(args[4]);
-    config->time_to_refactor = ft_atoi(args[5]);
-    config->number_of_compiles_required = ft_atoi(args[6]);
-    config->dongle_cooldown = ft_atoi(args[7]);
-    config->scheduler = (ft_strcmp(args[8], "fifo") == 0) ? FIFO : EDF;
+        return (printf("Error: Invalid argument count\n"), false);
+    if (!parse_numbers(args, config))
+        return (printf("Error: Invalid numeric argument\n"), false);
+    if (ft_strcmp(args[8], "fifo") == 0)
+        config->scheduler = FIFO;
+    else if (ft_strcmp(args[8], "edf") == 0)
+        config->scheduler = EDF;
+    else
+        return (printf("Error: Invalid scheduler\n"), false);
     return (true);
 }

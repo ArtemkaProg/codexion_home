@@ -78,6 +78,11 @@ typedef struct s_sim
 int ft_strlen(const char *s);
 char *ft_strdup(char *src);
 bool ft_strcmp(const char *s1, const char *s2);
-int ft_atoi(const char *str);
+bool    ft_atoi_safe(const char *str, int *result);
 bool parse_config(int argc, char **args, t_config *config);
 bool    init_sim(t_sim *sim);
+void clean_sim(t_sim *sim);
+void clean_before_scheduler(t_sim *sim);
+void clean_before_sim_mutexes(t_sim *sim);
+void clean_scheduler(t_sim *sim);
+long get_time_ms(void);

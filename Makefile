@@ -16,7 +16,7 @@ $(NAME): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -pthread -o $@
 
 clean:
 	rm -f $(OBJS) *.swp *.gch a.out

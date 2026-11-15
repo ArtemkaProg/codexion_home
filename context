@@ -11,3 +11,23 @@
 (Після завершення знову запитує донгли)
 
 -> Повторення циклу
+
+
+void *coder_routine(void *arg)
+{
+    t_coder *coder;
+
+    coder = (t_coder *)arg;
+    while (!simulation_stopped(coder->sim))
+    {
+        if (!acquire_dongles(coder))
+            break ;
+        compile(coder);
+        release_dongles(coder);
+        if (simulation_stopped(coder->sim))
+            break ;
+        debug(coder);
+        refactor(coder);
+    }
+    return (NULL);
+}

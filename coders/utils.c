@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <time.h>
+#include <limits.h>
 
 long get_time_ms(void)
 {
@@ -49,28 +50,22 @@ int ft_strcmp(const char *s1, const char *s2)
 	return *(unsigned char *)s1 - *(unsigned char *)s2;
 }
 
-int	ft_atoi(const char *str)
+bool    ft_atoi_safe(const char *str, int *result)
 {
-	int result = 0;
-	int sign = 1;
+    long    num;
 
-	while (*str == ' ' || *str == '\t' || *str == '\n')
-	{
-		str++;
-	}
-	if (*str == '-')
-	{
-		sign = -1;
-		str++;
-	}
-	else if (*str == '+')
-	{
-		str++;
-	}
-	while (*str >= '0' && *str <= '9')
-	{
-		result = result * 10 + (*str - '0');
-		str++;
-	}
-	return sign * result;
+    num = 0;
+    if (!*str)
+        return (false);
+    while (*str >= '0' && *str <= '9')
+    {
+        if (num > (INT_MAX - (*str - '0')) / 10)
+            return (false);
+        num = num * 10 + (*str - '0');
+        str++;
+    }
+    if (*str != '\0')
+        return (false);
+    *result = (int)num;
+    return (true);
 }
