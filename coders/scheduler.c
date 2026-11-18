@@ -39,10 +39,11 @@ void heapify_up(t_request *heap, int size, bool (*cmp)(t_request *, int))
 
 static void give_dongles(t_sim *sim)
 {
+    t_coder *coder;
     int id;
 
     id = sim->scheduler.heap[0].coder_id;
-    coder = sim->coders[id];
+    coder = sim->coders[id - 1];
     // left = sim->coders[id].left_dongle;
     // righ = sim->coders[id].right_dongle;
     pthread_mutex_lock(&sim->dongles[id].mutex);

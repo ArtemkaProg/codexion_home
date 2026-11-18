@@ -39,6 +39,7 @@ bool acquire_dongles(t_coder *coder)
     if (sim->scheduler.size >= sim->scheduler.capacity)
         return (pthread_mutex_unlock(&sim->scheduler.mutex), false);
     send_request(coder);
+    pthread_cond_signal(&sim->scheduler.cond, &sim->scheduler.mutex);
     // process_requests(coder->sim)
     pthread_mutex_unlock(&sim->scheduler.mutex);
     return (false); // temp return

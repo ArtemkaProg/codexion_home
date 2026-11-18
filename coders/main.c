@@ -12,7 +12,7 @@ static void join_coders(t_sim *sim)
     }
 }
 
-static void launch_coders(t_sim *sim)
+static bool launch_coders(t_sim *sim)
 {
     int i;
 
@@ -27,18 +27,20 @@ static void launch_coders(t_sim *sim)
             pthread_mutex_unlock(&sim->state_mutex);
             while (i > 0)
                 pthread_join(sim->coders[--i].thread, NULL);
-            return ;
+            return (false);
         }
         i++;
     }
-    if (pthread_create(&sim->scheduler_thread, NULL, scheduler_routine, &sim->scheduler) != 0)
+    if (pthread_create(&sim->scheduler_thread, NULL, scheduler_routine, sim) != 0)
     {
         printf("Error: Failed to create thread for scheduler\n");
         join_coders(sim);
-        return ;
+        return (false);
     }
     // temp
+    pthread_join(sim->scheduler_thread, NULL);
     join_coders(sim);
+    return (true);
 }
 
 bool run_sim(t_sim *sim)
