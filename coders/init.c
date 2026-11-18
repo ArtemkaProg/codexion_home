@@ -33,6 +33,7 @@ static bool init_scheduler(t_sim *sim)
         return (false);
     sim->scheduler.size = 0;
     sim->scheduler.capacity = sim->config.number_of_coders;
+    sim->scheduler.next_sequence = 0;
     if (pthread_mutex_init(&sim->scheduler.mutex, NULL) != 0)
         return (free(sim->scheduler.heap), false);
     if (pthread_cond_init(&sim->scheduler.cond, NULL) != 0)

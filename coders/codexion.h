@@ -14,24 +14,11 @@ typedef enum e_scheduler
     CUSTOM
 }   t_scheduler_type;
 
-typedef struct s_config
-{
-    int number_of_coders;
-    int time_to_burnout;
-    int time_to_compile;
-    int time_to_debug;
-    int time_to_refactor;
-    int number_of_compiles_required;
-    int dongle_cooldown;
-    t_scheduler_type scheduler;
-} t_config;
-
 typedef struct s_dongle
 {
     pthread_mutex_t mutex;
     int     owner_id;
     long    available_at;
-    // bool    is_available;
 } t_dongle;
 
 typedef struct s_coder
@@ -58,9 +45,22 @@ typedef struct s_scheduler
     t_request       *heap;
     int             size;
     int             capacity;
+    long        next_sequence;
     pthread_mutex_t mutex;
     pthread_cond_t  cond;
 }   t_scheduler;
+
+typedef struct s_config
+{
+    int number_of_coders;
+    int time_to_burnout;
+    int time_to_compile;
+    int time_to_debug;
+    int time_to_refactor;
+    int number_of_compiles_required;
+    int dongle_cooldown;
+    t_scheduler_type scheduler;
+} t_config;
 
 typedef struct s_sim
 {
@@ -75,14 +75,15 @@ typedef struct s_sim
     int             stopped;
 }   t_sim;
 
-int ft_strlen(const char *s);
-char *ft_strdup(char *src);
-bool ft_strcmp(const char *s1, const char *s2);
+bool    ft_strcmp(const char *s1, const char *s2);
 bool    ft_atoi_safe(const char *str, int *result);
-bool parse_config(int argc, char **args, t_config *config);
+bool    parse_config(int argc, char **args, t_config *config);
 bool    init_sim(t_sim *sim);
-void clean_sim(t_sim *sim);
-void clean_before_scheduler(t_sim *sim);
-void clean_before_sim_mutexes(t_sim *sim);
-void clean_scheduler(t_sim *sim);
-long get_time_ms(void);
+long    get_time_ms(void);
+void    clean_sim(t_sim *sim);
+void    clean_before_scheduler(t_sim *sim);
+void    clean_before_sim_mutexes(t_sim *sim);
+void    clean_scheduler(t_sim *sim);
+void    *coder_routine(void *arg);
+bool    acquire_dongles(t_coder *coder);
+void    heapify_up(t_request *heap, int size, bool (*cmp)(t_request *, int));

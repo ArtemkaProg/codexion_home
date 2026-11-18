@@ -6,7 +6,8 @@ SRCS = coders/main.c \
 		coders/utils.c \
 		coders/parse.c \
 		coders/init.c \
-		coders/clean.c
+		coders/clean.c \
+		coders/coder.c
 
 OBJS = $(SRCS:.c=.o)
 
