@@ -39,8 +39,9 @@ bool acquire_dongles(t_coder *coder)
     if (sim->scheduler.size >= sim->scheduler.capacity)
         return (pthread_mutex_unlock(&sim->scheduler.mutex), false);
     send_request(coder);
+    process_requests(coder->sim)
     pthread_mutex_unlock(&sim->scheduler.mutex);
-    return (false);
+    return (false); // temp return
 }
 // sim->dongles[coder->left_dongle].owner_id = coder->id;
 // sim->dongles[coder->right_dongle].owner_id = coder->id;
