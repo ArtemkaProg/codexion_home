@@ -68,6 +68,7 @@ typedef struct s_sim
     t_coder         *coders;
     t_dongle        *dongles;
     t_scheduler     scheduler;
+    pthread_t       scheduler_thread;
     pthread_t       monitor;
     pthread_mutex_t state_mutex;
     pthread_mutex_t print_mutex;
@@ -85,6 +86,8 @@ void    clean_before_scheduler(t_sim *sim);
 void    clean_before_sim_mutexes(t_sim *sim);
 void    clean_scheduler(t_sim *sim);
 void    *coder_routine(void *arg);
+void    *scheduler_routine(void *arg);
 bool    acquire_dongles(t_coder *coder);
 void    heapify_up(t_request *heap, int size, bool (*cmp)(t_request *, int));
 void    process_requests(t_sim *sim);
+void    *scheduler_routine(void *arg);

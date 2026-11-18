@@ -42,12 +42,13 @@ static void give_dongles(t_sim *sim)
     int id;
 
     id = sim->scheduler.heap[0].coder_id;
+    coder = sim->coders[id];
     // left = sim->coders[id].left_dongle;
     // righ = sim->coders[id].right_dongle;
     pthread_mutex_lock(&sim->dongles[id].mutex);
     sim->dongles[coder->left_dongle].owner_id = coder->id;
     sim->dongles[coder->right_dongle].owner_id = coder->id;
-    pthread_mutex_lock(&sim->dongles[id].mutex);
+    pthread_mutex_unlock(&sim->dongles[id].mutex);
 }
 
 void process_requests(t_sim *sim)
@@ -55,12 +56,35 @@ void process_requests(t_sim *sim)
     bool (*cmp)(t_request *, int);
 
     if (sim->config.scheduler == FIFO)
-        cmp = fifo
+        cmp = fifo;
     else if (sim->config.scheduler == EDF)
-        cmp = edf
+        cmp = edf;
     else if (sim->config.scheduler == CUSTOM)
         // cmp = custom
+        ;
     heapify_up(sim->scheduler.heap, sim->scheduler.size, cmp);
-    pthread_cond_signal(&sim->scheduler.cond);
-    give_dongles()
+    give_dongles(sim);
+}
+
+void *scheduler_routine(void *arg)
+{
+    t_sim *sim;
+
+    sim = (t_sim *)arg;
+    pthread_mutex_lock(&sim->scheduler.mutex);
+    while (!sim->stopped)
+    {
+        while (sim->scheduler.size == 0 && !sim->stopped)
+        {
+            pthread_cond_wait(&sim->scheduler.cond,
+                &sim->scheduler.mutex);
+        }
+
+        if (sim->stopped)
+            break ;
+
+        process_requests(sim);
+    }
+    pthread_mutex_unlock(&sim->scheduler.mutex);
+    return (NULL);
 }

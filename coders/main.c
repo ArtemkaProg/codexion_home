@@ -1,5 +1,17 @@
 #include "codexion.h"
 
+static void join_coders(t_sim *sim)
+{
+    int i;
+
+    i = 0;
+    while (i < sim->config.number_of_coders)
+    {
+        pthread_join(sim->coders[i].thread, NULL);
+        i++;
+    }
+}
+
 static void launch_coders(t_sim *sim)
 {
     int i;
@@ -19,13 +31,14 @@ static void launch_coders(t_sim *sim)
         }
         i++;
     }
-    // temp
-    i = 0;
-    while (i < sim->config.number_of_coders)
+    if (pthread_create(&sim->scheduler_thread, NULL, scheduler_routine, &sim->scheduler) != 0)
     {
-        pthread_join(sim->coders[i].thread, NULL);
-        i++;
+        printf("Error: Failed to create thread for scheduler\n");
+        join_coders(sim);
+        return ;
     }
+    // temp
+    join_coders(sim);
 }
 
 bool run_sim(t_sim *sim)
