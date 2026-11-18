@@ -65,6 +65,7 @@ void process_requests(t_sim *sim)
         ;
     heapify_up(sim->scheduler.heap, sim->scheduler.size, cmp);
     give_dongles(sim);
+    sim->scheduler.size--;
 }
 
 void *scheduler_routine(void *arg)
