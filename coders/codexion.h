@@ -88,6 +88,5 @@ void    clean_scheduler(t_sim *sim);
 void    *coder_routine(void *arg);
 void    *scheduler_routine(void *arg);
 bool    acquire_dongles(t_coder *coder);
-void    heapify_up(t_request *heap, int size, bool (*cmp)(t_request *, int));
-void    process_requests(t_sim *sim);
-void    *scheduler_routine(void *arg);
+void    push_request(t_sim *sim, t_request request);
+bool    process_requests(t_sim *sim);

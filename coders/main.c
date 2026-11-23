@@ -1,60 +1,58 @@
 #include "codexion.h"
 
-static void join_coders(t_sim *sim)
+static void join_coders(t_sim *sim, int count)
 {
     int i;
 
     i = 0;
-    while (i < sim->config.number_of_coders)
+    while (i < count)
     {
         pthread_join(sim->coders[i].thread, NULL);
         i++;
     }
 }
 
-static bool launch_coders(t_sim *sim)
+static bool launch_coders(t_sim *sim, int *created)
 {
     int i;
 
+    *created = 0;
     i = 0;
     while (i < sim->config.number_of_coders)
     {
-        if (pthread_create(&sim->coders[i].thread, NULL, coder_routine, &sim->coders[i]) != 0)
+        if (pthread_create(&sim->coders[i].thread,
+                NULL, coder_routine, &sim->coders[i]) != 0)
         {
-            printf("Error: Failed to create thread for coder %d\n", i + 1);
-            pthread_mutex_lock(&sim->state_mutex);
-            sim->stopped = 1;
-            pthread_mutex_unlock(&sim->state_mutex);
-            while (i > 0)
-                pthread_join(sim->coders[--i].thread, NULL);
+            printf("Error: Failed to create coder %d\n", i + 1);
             return (false);
         }
+        (*created)++;
         i++;
     }
-    if (pthread_create(&sim->scheduler_thread, NULL, scheduler_routine, sim) != 0)
-    {
-        printf("Error: Failed to create thread for scheduler\n");
-        join_coders(sim);
-        return (false);
-    }
-    // temp
-    pthread_join(sim->scheduler_thread, NULL);
-    join_coders(sim);
     return (true);
 }
 
 bool run_sim(t_sim *sim)
 {
-    launch_coders(sim);
-    // int i = 0;
-    // while (i < sim->scheduler.size)
-    // {
-    //     printf("Coder ID: %d, Arrival Time: %ld, Deadline: %ld, Sequence: %ld\n",
-    //         sim->scheduler.heap[i].coder_id, sim->scheduler.heap[i].arrival_time, sim->scheduler.heap[i].deadline, sim->scheduler.heap[i].sequence);
-    //     i++;
-    // }
+    int created;
+    bool success;
 
-    return (true);
+    if (pthread_create(&sim->scheduler_thread,
+            NULL, scheduler_routine, sim) != 0)
+        return (false);
+
+    success = launch_coders(sim, &created);
+
+    // TEMP: кодери поки завершуються після надсилання запиту.
+    join_coders(sim, created);
+
+    pthread_mutex_lock(&sim->scheduler.mutex);
+    sim->stopped = true;
+    pthread_cond_broadcast(&sim->scheduler.cond);
+    pthread_mutex_unlock(&sim->scheduler.mutex);
+
+    pthread_join(sim->scheduler_thread, NULL);
+    return (success);
 }
 
 int main(int argc, char **args)
